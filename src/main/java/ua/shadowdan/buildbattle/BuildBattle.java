@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.annotation.command.Commands;
 import org.bukkit.plugin.java.annotation.plugin.Plugin;
 import org.bukkit.plugin.java.annotation.plugin.author.Author;
 import ua.shadowdan.buildbattle.command.BuildBattleCommand;
+import ua.shadowdan.buildbattle.command.VoteCommand;
 import ua.shadowdan.buildbattle.config.Configuration;
 import ua.shadowdan.buildbattle.config.LocationMixin;
 import ua.shadowdan.buildbattle.config.WorldDeserializer;
@@ -28,7 +29,7 @@ import java.util.logging.Level;
  * Created by SHADOWDAN on 30.06.2019.
  */
 @Author("SAHDOWDAN")
-@Commands(value = {@Command(name ="buildbattle", aliases = {"bb"})})
+@Commands(value = {@Command(name ="buildbattle", aliases = {"bb"}), @Command(name = "vote")})
 @Plugin(name = "BuildBattle", version = "1.0")
 public class BuildBattle extends JavaPlugin {
 
@@ -69,6 +70,7 @@ public class BuildBattle extends JavaPlugin {
         this.gameManager.setup();
 
         new BuildBattleCommand(this).setup();
+        new VoteCommand(this).setup();
     }
 
     public void saveDefaultConfig(String configFileName) {

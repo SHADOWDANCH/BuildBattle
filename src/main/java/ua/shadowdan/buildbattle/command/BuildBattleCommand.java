@@ -35,6 +35,13 @@ public class BuildBattleCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         GameManager gameManager = buildBattle.getGameManager();
+        if (args.length < 1) {
+            sender.sendMessage(new String[] {
+                    "/bb state - отладочная информация",
+                    "/bb forcestart - принудительный запуск игры"
+            });
+            return true;
+        }
         if (args[0].equalsIgnoreCase("state")) {
             sender.sendMessage("Current game state: " + gameManager.getCurrentState().name());
             return true;

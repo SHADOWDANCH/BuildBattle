@@ -13,7 +13,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import ua.shadowdan.buildbattle.cuboid.Cuboid;
-import ua.shadowdan.buildbattle.listener.BaseGameListener;
+import ua.shadowdan.buildbattle.listener.TerrainProtectionListener;
+import ua.shadowdan.buildbattle.vote.VoteManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,17 +30,20 @@ public class GameManager implements Listener {
     private final BuildBattle buildBattle;
     @Getter
     private final GameArena arena;
+    @Getter
+    private final VoteManager voteManager;
 
     public GameManager(BuildBattle buildBattle) {
         this.buildBattle = buildBattle;
         this.currentState = GameState.WAITING;
         this.arena = new GameArena(buildBattle);
+        this.voteManager = new VoteManager(buildBattle);
     }
 
     public void setup() {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(this, buildBattle);
-        pluginManager.registerEvents(new BaseGameListener(buildBattle), buildBattle);
+        pluginManager.registerEvents(new TerrainProtectionListener(buildBattle), buildBattle);
     }
 
     @EventHandler

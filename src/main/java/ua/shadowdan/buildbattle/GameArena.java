@@ -5,8 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import ua.shadowdan.buildbattle.util.CollectionUtils;
-import ua.shadowdan.buildbattle.util.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,10 +18,6 @@ public class GameArena {
     private final BuildBattle buildBattle;
     @Getter
     private Map<Player, Location> playerPlot;
-    @Getter
-    private Map<Player, Integer> playerGrade = new HashMap<>();
-    @Getter
-    private Pair<Player, Location> currentVoting;
 
     public GameArena(BuildBattle buildBattle) {
         this.buildBattle = buildBattle;
@@ -44,30 +38,8 @@ public class GameArena {
             @Override
             public void run() {
                 Bukkit.broadcastMessage("Время вышло! Начинаем голосование.");
-                processVote();
+                buildBattle.getGameManager().getVoteManager().startVotesStage(playerPlot);
             }
         }.runTaskLater(buildBattle, buildBattle.getPluginConfig().getGameDuration());
     }
-
-    private void processVote() {
-        buildBattle.getGameManager().setCurrentState(GameState.VOTE);
-        Queue<Player> queue = new PriorityQueue<>(playerPlot.keySet());
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (queue.peek() != null) {
-                    Player nextPlayer = queue.poll();
-                    currentVoting = new Pair<>(nextPlayer, playerPlot.get(nextPlayer));
-                    playerPlot.keySet().forEach(player -> player.teleport(currentVoting.getValue()));
-                    Bukkit.broadcastMessage("Постройка игрока " + currentVoting.getKey().getDisplayName());
-                } else {
-                    Player player = CollectionUtils.getKeyWithHighestValue(playerGrade);
-                    Bukkit.broadcastMessage("Выиграл игрок - " + player.getDisplayName() + ". Он набрал " + playerGrade.get(player) + " очков!");
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(buildBattle, 0L, 2400L);
-    }
-
 }

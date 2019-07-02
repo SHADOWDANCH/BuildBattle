@@ -8,15 +8,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import ua.shadowdan.buildbattle.BuildBattle;
+import ua.shadowdan.buildbattle.GameManager;
+import ua.shadowdan.buildbattle.GameState;
 
 /**
  * Created by SHADOWDAN on 01.07.2019.
  */
-public class BaseGameListener implements Listener {
+public class TerrainProtectionListener implements Listener {
 
     private final BuildBattle buildBattle;
 
-    public BaseGameListener(BuildBattle buildBattle) {
+    public TerrainProtectionListener(BuildBattle buildBattle) {
         this.buildBattle = buildBattle;
     }
 
@@ -31,7 +33,8 @@ public class BaseGameListener implements Listener {
     }
 
     private void disallowInteract(Block block, Player player, Cancellable event) {
-        if (buildBattle.getGameManager().getPlotsOnLocation(block.getLocation()).size() <= 0) {
+        GameManager manager = buildBattle.getGameManager();
+        if ((manager.getCurrentState() != GameState.GAME) || (manager.getPlotsOnLocation(block.getLocation()).size() <= 0)) {
             player.sendMessage("Вы не можете здесь строить!");
             event.setCancelled(true);
         }
