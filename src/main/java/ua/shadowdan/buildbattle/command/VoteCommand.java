@@ -7,8 +7,9 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import ua.shadowdan.buildbattle.BuildBattle;
 import ua.shadowdan.buildbattle.GameState;
+import ua.shadowdan.buildbattle.vote.VoteManager;
+import ua.shadowdan.buildbattle.vote.VoteResult;
 
-import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -36,7 +37,9 @@ public class VoteCommand implements CommandExecutor {
             sender.sendMessage("Голосование ещё не началось!");
             return true;
         }
-        Player currentPlayer = buildBattle.getGameManager().getVoteManager().getCurrentPlayer();
+        VoteManager voteManager = buildBattle.getGameManager().getVoteManager();
+        Player currentPlayer = voteManager.getCurrentPlayer();
+
         if (currentPlayer == sender) {
             sender.sendMessage("Вы не можете голосовать сами за себя");
             return true;
@@ -45,19 +48,28 @@ public class VoteCommand implements CommandExecutor {
             sender.sendMessage("Используйте: /vote <1..5>");
             return true;
         }
-        Map<Player, Integer> grades = buildBattle.getGameManager().getVoteManager().getGrades();
+
         int grade;
         try {
-            grade = grades.getOrDefault(currentPlayer, 0) + Integer.parseInt(args[0]);
+            grade = Integer.parseInt(args[0]);
         } catch (NumberFormatException ex) {
             sender.sendMessage("Вы ввели не цифру");
             return true;
         }
-        if (grade > 5) {
-            sender.sendMessage("Вы не сожете ставить оценку больше 5");
+
+        if (grade <= 0 || grade > 5) {
+            sender.sendMessage("Вы можете поставить оценку только от 1 до 5");
             return true;
         }
-        grades.put(currentPlayer, grade);
+
+        voteManager.getVotes().putIfAbsent(currentPlayer, new VoteResult(currentPlayer));
+        VoteResult voteResult = voteManager.getVotes().get(currentPlayer);
+        if (voteResult.getGrades().containsKey(sender)) {
+            sender.sendMessage("Вы уже поставили оценку!");
+            return true;
+        }
+
+        voteResult.getGrades().put(sender, grade);
         sender.sendMessage("Вы потсавил оценку " + grade + " игроку " + currentPlayer.getDisplayName());
         return true;
     }

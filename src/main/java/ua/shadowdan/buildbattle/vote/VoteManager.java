@@ -19,7 +19,7 @@ public class VoteManager {
 
     private final BuildBattle buildBattle;
     @Getter
-    private Map<Player, Integer> grades = new HashMap<>();
+    private Map<Player, VoteResult> votes = new HashMap<>();
     @Getter
     private Queue<Player> votingQueue = new PriorityQueue<>(new BasicComparator<>());
     @Getter
@@ -41,8 +41,8 @@ public class VoteManager {
                     playerPlot.keySet().forEach(player -> player.teleport(playerPlot.get(currentPlayer)));
                     Bukkit.broadcastMessage("Постройка игрока " + currentPlayer.getDisplayName());
                 } else {
-                    Player player = CollectionUtils.getKeyWithHighestValue(grades);
-                    Bukkit.broadcastMessage("Выиграл игрок - " + player.getDisplayName() + ". Он набрал " + grades.get(player) + " очков!");
+                    Player player = CollectionUtils.getKeyWithHighestValue(votes);
+                    Bukkit.broadcastMessage("Выиграл игрок - " + player.getDisplayName() + ". Он набрал " + votes.get(player).getFinalGrade() + " очков!");
                     this.cancel();
                 }
             }
