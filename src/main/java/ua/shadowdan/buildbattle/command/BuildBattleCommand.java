@@ -1,22 +1,21 @@
 package ua.shadowdan.buildbattle.command;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.command.*;
 import org.spigotmc.SpigotConfig;
 import ua.shadowdan.buildbattle.BuildBattle;
 import ua.shadowdan.buildbattle.GameManager;
 import ua.shadowdan.buildbattle.GameState;
+import ua.shadowdan.buildbattle.util.CommonUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
  * Created by SHADOWDAN on 01.07.2019.
  */
-public class BuildBattleCommand implements CommandExecutor {
+public class BuildBattleCommand implements CommandExecutor, TabCompleter {
 
     private final BuildBattle buildBattle;
 
@@ -28,6 +27,7 @@ public class BuildBattleCommand implements CommandExecutor {
         PluginCommand command = buildBattle.getCommand("buildbattle");
         if (command != null) {
             command.setExecutor(this);
+            command.setTabCompleter(this);
         } else {
             buildBattle.getLogger().log(Level.WARNING,"Command \"buildbattle\" not registered. Executor will not be initialized.");
         }
@@ -70,5 +70,14 @@ public class BuildBattleCommand implements CommandExecutor {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (!sender.hasPermission("buildbattle.admin")) {
+            return null;
+        }
+
+        return CommonUtils.getListOfStringsMatchingLastWord(args, "save", "state", "forcestart");
     }
 }
