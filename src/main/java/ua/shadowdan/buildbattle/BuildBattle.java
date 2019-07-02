@@ -10,7 +10,6 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
@@ -22,7 +21,8 @@ import ua.shadowdan.buildbattle.config.Configuration;
 import ua.shadowdan.buildbattle.config.LocationMixin;
 import ua.shadowdan.buildbattle.config.WorldDeserializer;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 
 /**
@@ -61,6 +61,8 @@ public class BuildBattle extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             throw new RuntimeException("Failed to load config! Plugin will not be enabled", e);
         }
+
+        config.getPlots().forEach(plot -> plot.getWorld().setAutoSave(false));
 
         if (config.getSpawnPoints().size() < config.getMaxPlayers()) {
             this.getLogger().log(Level.WARNING, "Max player's less then spawn point's. This may cause unexpected errors!");

@@ -32,11 +32,13 @@ public class TerrainProtectionListener implements Listener {
         this.disallowInteract(event.getBlock(), event.getPlayer(), event);
     }
 
-    private void disallowInteract(Block block, Player player, Cancellable event) {
+    private boolean disallowInteract(Block block, Player player, Cancellable event) {
         GameManager manager = buildBattle.getGameManager();
         if ((manager.getCurrentState() != GameState.GAME) || (manager.getPlotsOnLocation(block.getLocation()).size() <= 0)) {
             player.sendMessage("Вы не можете здесь строить!");
             event.setCancelled(true);
+            return true;
         }
+        return false;
     }
 }

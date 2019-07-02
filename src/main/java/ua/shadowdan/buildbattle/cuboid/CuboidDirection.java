@@ -1,9 +1,10 @@
 package ua.shadowdan.buildbattle.cuboid;
 
 public enum CuboidDirection {
-    North,South,East,West,Down,Up,Unknown;
+    North, South, East, West, Down, Up, Unknown;
+
     public CuboidDirection opposite() {
-        switch(this) {
+        switch (this) {
             case North:
                 return South;
             case East:

@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.spigotmc.SpigotConfig;
 import ua.shadowdan.buildbattle.BuildBattle;
 import ua.shadowdan.buildbattle.GameManager;
 import ua.shadowdan.buildbattle.GameState;
@@ -35,11 +36,25 @@ public class BuildBattleCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         GameManager gameManager = buildBattle.getGameManager();
+        if (!sender.hasPermission("buildbattle.admin")) {
+            sender.sendMessage(SpigotConfig.unknownCommandMessage);
+            return true;
+        }
         if (args.length < 1) {
             sender.sendMessage(new String[] {
                     "/bb state - отладочная информация",
                     "/bb forcestart - принудительный запуск игры"
             });
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("save")) {
+            if (args.length < 2) {
+                sender.sendMessage("Используйте /bb save true/false");
+                return true;
+            }
+            boolean save = Boolean.getBoolean(args[1]);
+            buildBattle.getPluginConfig().getPlots().forEach(plot -> plot.getWorld().setAutoSave(save));
+            sender.sendMessage("Сохранение мира: " + save);
             return true;
         }
         if (args[0].equalsIgnoreCase("state")) {

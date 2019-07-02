@@ -14,6 +14,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class VoteResult implements Comparable<VoteResult> {
 
+    public static final VoteResult EMPTY = new VoteResult(null);
+
     @Getter
     private final Player owner;
     @Getter

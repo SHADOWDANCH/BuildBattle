@@ -1,9 +1,17 @@
 package ua.shadowdan.buildbattle.cuboid;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Getter;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Getter
 public class Cuboid {
+    private World world;
     private long xMin;
     private long xMax;
     private long yMin;
@@ -12,12 +20,14 @@ public class Cuboid {
     private long zMax;
 
     public Cuboid(Location loc1, Location loc2) {
+        this.world = loc1.getWorld();
         normalize(loc1.getBlockX(), loc1.getBlockY(), loc1.getBlockZ(), loc2.getBlockX(), loc2.getBlockY(),
                 loc2.getBlockZ());
     }
 
     @JsonCreator
-    public Cuboid(long x1, long y1, long z1, long x2, long y2, long z2) {
+    public Cuboid(World world, long x1, long y1, long z1, long x2, long y2, long z2) {
+        this.world = world;
         normalize(x1, y1, z1, x2, y2, z2);
     }
 
@@ -59,20 +69,35 @@ public class Cuboid {
         return zMax - zMin + 1;
     }
 
+    public Set<Chunk> getChunks() {
+        Set<Chunk> chunks = new HashSet<>();
+
+        int x1 = (int) xMin & ~0xf;
+        int x2 = (int) xMax & ~0xf;
+        int z1 = (int) zMin & ~0xf;
+        int z2 = (int) zMax & ~0xf;
+        for (int x = x1; x <= x2; x += 16) {
+            for (int z = z1; z <= z2; z += 16) {
+                chunks.add(world.getChunkAt(x >> 4, z >> 4));
+            }
+        }
+        return chunks;
+    }
+
     public Cuboid expand(CuboidDirection dir, int amount) {
         switch (dir) {
             case North:
-                return new Cuboid(xMin - amount, yMin, zMin, xMax, yMax, zMax);
+                return new Cuboid(world, xMin - amount, yMin, zMin, xMax, yMax, zMax);
             case South:
-                return new Cuboid(xMin, yMin, zMin, xMax + amount, yMax, zMax);
+                return new Cuboid(world, xMin, yMin, zMin, xMax + amount, yMax, zMax);
             case East:
-                return new Cuboid(xMin, yMin, zMin - amount, xMax, yMax, zMax);
+                return new Cuboid(world, xMin, yMin, zMin - amount, xMax, yMax, zMax);
             case West:
-                return new Cuboid(xMin, yMin, zMin, xMax, yMax, zMax + amount);
+                return new Cuboid(world, xMin, yMin, zMin, xMax, yMax, zMax + amount);
             case Down:
-                return new Cuboid(xMin, yMin - amount, zMin, xMax, yMax, zMax);
+                return new Cuboid(world, xMin, yMin - amount, zMin, xMax, yMax, zMax);
             case Up:
-                return new Cuboid(xMin, yMin, zMin, xMax, yMax + amount, zMax);
+                return new Cuboid(world, xMin, yMin, zMin, xMax, yMax + amount, zMax);
             default:
                 throw new IllegalArgumentException("invalid direction " + dir);
         }

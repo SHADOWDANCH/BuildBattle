@@ -7,8 +7,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import ua.shadowdan.buildbattle.BasicComparator;
 import ua.shadowdan.buildbattle.BuildBattle;
+import ua.shadowdan.buildbattle.GameManager;
 import ua.shadowdan.buildbattle.GameState;
 import ua.shadowdan.buildbattle.util.CollectionUtils;
+import ua.shadowdan.buildbattle.util.CommonUtils;
 
 import java.util.*;
 
@@ -19,9 +21,9 @@ public class VoteManager {
 
     private final BuildBattle buildBattle;
     @Getter
-    private Map<Player, VoteResult> votes = new HashMap<>();
+    private Map<Player, VoteResult> votes;
     @Getter
-    private Queue<Player> votingQueue = new PriorityQueue<>(new BasicComparator<>());
+    private Queue<Player> votingQueue;
     @Getter
     private Player currentPlayer;
 
@@ -30,8 +32,12 @@ public class VoteManager {
     }
 
     public void startVotesStage(Map<Player, Location> playerPlot) {
-        buildBattle.getGameManager().setCurrentState(GameState.VOTE);
+        votes = new HashMap<>();
+        votingQueue = new PriorityQueue<>(new BasicComparator<>());
         votingQueue.addAll(playerPlot.keySet());
+
+        GameManager manager = buildBattle.getGameManager();
+        manager.setCurrentState(GameState.VOTE);
 
         new BukkitRunnable() {
             @Override
@@ -41,8 +47,16 @@ public class VoteManager {
                     playerPlot.keySet().forEach(player -> player.teleport(playerPlot.get(currentPlayer)));
                     Bukkit.broadcastMessage("Постройка игрока " + currentPlayer.getDisplayName());
                 } else {
-                    Player player = CollectionUtils.getKeyWithHighestValue(votes);
-                    Bukkit.broadcastMessage("Выиграл игрок - " + player.getDisplayName() + ". Он набрал " + votes.get(player).getFinalGrade() + " очков!");
+                    Optional<Player> optionalPlayer;
+                    if (votes.size() > 0) {
+                        optionalPlayer = Optional.ofNullable(CollectionUtils.getKeyWithHighestValue(votes));
+                    } else {
+                        optionalPlayer = playerPlot.keySet().stream().findAny();
+                    }
+                    optionalPlayer.ifPresent(player -> {
+                        Bukkit.broadcastMessage("Выиграл игрок - " + player.getDisplayName() + ". Он набрал " + votes.getOrDefault(player, VoteResult.EMPTY).getFinalGrade() + " очков!");
+                        CommonUtils.countdown(buildBattle, 15, () -> manager.getArena().finalizeGame());
+                    });
                     this.cancel();
                 }
             }

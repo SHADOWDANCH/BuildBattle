@@ -6,7 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -41,5 +42,11 @@ public class GameArena {
                 buildBattle.getGameManager().getVoteManager().startVotesStage(playerPlot);
             }
         }.runTaskLater(buildBattle, buildBattle.getPluginConfig().getGameDuration());
+    }
+
+    public void finalizeGame() {
+        buildBattle.getGameManager().setCurrentState(GameState.END);
+
+        Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer("Игра окончена"));
     }
 }
