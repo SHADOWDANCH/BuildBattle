@@ -43,7 +43,8 @@ public class BuildBattleCommand implements CommandExecutor, TabCompleter {
         if (args.length < 1) {
             sender.sendMessage(new String[] {
                     "/bb state - отладочная информация",
-                    "/bb forcestart - принудительный запуск игры"
+                    "/bb forcestart - принудительный запуск игры",
+                    "/bb save <true/false> - включить/отключить сохранение мира"
             });
             return true;
         }
@@ -52,7 +53,7 @@ public class BuildBattleCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage("Используйте /bb save true/false");
                 return true;
             }
-            boolean save = Boolean.getBoolean(args[1]);
+            boolean save = Boolean.parseBoolean(args[1]);
             buildBattle.getPluginConfig().getPlots().forEach(plot -> plot.getWorld().setAutoSave(save));
             sender.sendMessage("Сохранение мира: " + save);
             return true;
@@ -75,6 +76,9 @@ public class BuildBattleCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission("buildbattle.admin")) {
+            return null;
+        }
+        if (args.length != 1) {
             return null;
         }
 
