@@ -42,6 +42,9 @@ public class VoteManager {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (manager.getCurrentState() != GameState.VOTE) {
+                    this.cancel();
+                }
                 if (votingQueue.peek() != null) {
                     currentPlayer = votingQueue.poll();
                     playerPlot.keySet().forEach(player -> player.teleport(playerPlot.get(currentPlayer)));

@@ -94,6 +94,17 @@ public class GameManager implements Listener {
         int maxPlayers = buildBattle.getPluginConfig().getMaxPlayers();
 
         event.setQuitMessage(player.getDisplayName() + " вышёл из игры, " + onlinePlayers + "/" + maxPlayers);
+
+        if (getCurrentState() != GameState.WAITING) {
+            if (onlinePlayers <= 0) {
+                this.getArena().finalizeGame();
+                return;
+            }
+
+            getArena().getPlayerPlot().remove(player);
+            getVoteManager().getVotes().remove(player);
+            getVoteManager().getVotingQueue().remove(player);
+        }
     }
 
     public List<Cuboid> getPlotsOnLocation(Location loc) {

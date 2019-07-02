@@ -38,6 +38,9 @@ public class GameArena {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (buildBattle.getGameManager().getCurrentState() != GameState.GAME) {
+                    this.cancel();
+                }
                 Bukkit.broadcastMessage("Время вышло! Начинаем голосование.");
                 buildBattle.getGameManager().getVoteManager().startVotesStage(playerPlot);
             }
@@ -48,5 +51,7 @@ public class GameArena {
         buildBattle.getGameManager().setCurrentState(GameState.END);
 
         Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer("Игра окончена"));
+
+        //TODO: возможно очистка мира, выгрузка/загрузка
     }
 }
