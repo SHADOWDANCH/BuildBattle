@@ -23,4 +23,5 @@ public class Configuration {
     private final List<Cuboid> plots;
     @JsonProperty("spawn-points")
     private final List<Location> spawnPoints;
+    private final String[] themes;
 }

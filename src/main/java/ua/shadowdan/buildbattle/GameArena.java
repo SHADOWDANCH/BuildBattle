@@ -8,6 +8,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,6 +20,8 @@ public class GameArena {
     private final BuildBattle buildBattle;
     @Getter
     private Map<Player, Location> playerPlot;
+    @Getter
+    private String theme;
 
     public GameArena(BuildBattle buildBattle) {
         this.buildBattle = buildBattle;
@@ -33,7 +36,11 @@ public class GameArena {
 
         playerPlot.forEach(Player::teleport);
 
+        String[] themes = buildBattle.getPluginConfig().getThemes();
+        theme = themes[new Random().nextInt(themes.length)];
+
         Bukkit.broadcastMessage("Игра началась!");
+        Bukkit.broadcastMessage("Тема посторойки: " + theme);
 
         new BukkitRunnable() {
             @Override
