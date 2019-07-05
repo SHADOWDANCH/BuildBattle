@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import ua.shadowdan.buildbattle.cuboid.Cuboid;
+import ua.shadowdan.buildbattle.event.GameStateChangeEvent;
 import ua.shadowdan.buildbattle.listener.TerrainProtectionListener;
 import ua.shadowdan.buildbattle.vote.VoteManager;
 
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
  */
 public class GameManager implements Listener {
 
-    @Getter @Setter
+    @Getter
     private GameState currentState;
     private final BuildBattle buildBattle;
     @Getter
@@ -48,7 +49,7 @@ public class GameManager implements Listener {
 
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
-        if (currentState != GameState.WAITING) {
+        if (getCurrentState() != GameState.WAITING) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Игра уже началась");
         }
     }
@@ -80,6 +81,7 @@ public class GameManager implements Listener {
                     return;
                 }
                 if (iter <= 0) {
+                    //TODO: возможно здесь нужно создаваь новый объект арены
                     arena.startArena(new ArrayList<>(Bukkit.getOnlinePlayers()), buildBattle.getPluginConfig().getSpawnPoints());
                     this.cancel();
                 }
@@ -111,5 +113,12 @@ public class GameManager implements Listener {
         return buildBattle.getPluginConfig().getPlots().stream()
                 .filter(plot -> plot.contains(loc))
                 .collect(Collectors.toList());
+    }
+
+    public void setCurrentState(GameState currentState) {
+        GameStateChangeEvent event = new GameStateChangeEvent(currentState);
+        Bukkit.getPluginManager().callEvent(event);
+
+        this.currentState = event.getGameState();
     }
 }

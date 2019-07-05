@@ -65,4 +65,12 @@ public class VoteManager {
             }
         }.runTaskTimer(buildBattle, 0L, 2400L);
     }
+
+    public int getPlayerGrade(Player player) {
+        VoteResult result = votes.get(currentPlayer);
+        if (result != null) {
+            return votes.get(currentPlayer).getGrades().getOrDefault(player, 0);
+        }
+        return 0;
+    }
 }

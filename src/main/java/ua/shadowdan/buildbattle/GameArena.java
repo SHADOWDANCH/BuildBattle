@@ -22,9 +22,12 @@ public class GameArena {
     private Map<Player, Location> playerPlot;
     @Getter
     private String theme;
+    @Getter
+    private long ticksToEnd;
 
     public GameArena(BuildBattle buildBattle) {
         this.buildBattle = buildBattle;
+        this.ticksToEnd = buildBattle.getPluginConfig().getGameDuration();
     }
 
     public void startArena(List<Player> arenaPlayers, List<Location> spawnPoints) {
@@ -45,13 +48,18 @@ public class GameArena {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (buildBattle.getGameManager().getCurrentState() != GameState.GAME) {
+                ticksToEnd--;
+
+                if (ticksToEnd <= 0) {
+                    if (buildBattle.getGameManager().getCurrentState() != GameState.GAME) {
+                        this.cancel();
+                    }
+                    Bukkit.broadcastMessage("Время вышло! Начинаем голосование.");
+                    buildBattle.getGameManager().getVoteManager().startVotesStage(playerPlot);
                     this.cancel();
                 }
-                Bukkit.broadcastMessage("Время вышло! Начинаем голосование.");
-                buildBattle.getGameManager().getVoteManager().startVotesStage(playerPlot);
             }
-        }.runTaskLater(buildBattle, buildBattle.getPluginConfig().getGameDuration());
+        }.runTaskTimer(buildBattle, 0L, 1L);
     }
 
     public void finalizeGame() {

@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
+import org.bukkit.plugin.java.annotation.dependency.Dependency;
 import org.bukkit.plugin.java.annotation.plugin.Plugin;
 import org.bukkit.plugin.java.annotation.plugin.author.Author;
 import ua.shadowdan.buildbattle.command.BuildBattleCommand;
@@ -20,6 +21,7 @@ import ua.shadowdan.buildbattle.command.VoteCommand;
 import ua.shadowdan.buildbattle.config.Configuration;
 import ua.shadowdan.buildbattle.config.LocationMixin;
 import ua.shadowdan.buildbattle.config.WorldDeserializer;
+import ua.shadowdan.buildbattle.scoreboard.ScoreboardManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,14 +31,18 @@ import java.util.logging.Level;
  * Created by SHADOWDAN on 30.06.2019.
  */
 @Author("SAHDOWDAN")
+@Dependency("View")
 @Commands(value = {@Command(name ="buildbattle", aliases = {"bb"}), @Command(name = "vote")})
 @Plugin(name = "BuildBattle", version = "1.0")
 public class BuildBattle extends JavaPlugin {
 
     @Getter
     private GameManager gameManager;
-    private Configuration config;
+    @Getter
+    private ScoreboardManager scoreboardManager;
+    @Getter
     private ObjectMapper objectMapper;
+    private Configuration config;
 
     @Override
     public void onEnable() {
@@ -71,6 +77,9 @@ public class BuildBattle extends JavaPlugin {
         this.gameManager = new GameManager(this);
         this.gameManager.setup();
 
+        this.scoreboardManager = new ScoreboardManager(this);
+        this.scoreboardManager.setup();
+
         new BuildBattleCommand(this).setup();
         new VoteCommand(this).setup();
     }
@@ -89,7 +98,4 @@ public class BuildBattle extends JavaPlugin {
         return config;
     }
 
-    public ObjectMapper getObjectMapper() {
-        return objectMapper;
-    }
 }

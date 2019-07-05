@@ -112,5 +112,11 @@
             <version>1.1.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>dk.xakeps.view</groupId>
+            <artifactId>view-api</artifactId>
+            <version>0.1-SNAPSHOT</version>
+           <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

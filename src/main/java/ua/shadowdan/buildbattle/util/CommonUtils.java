@@ -42,4 +42,12 @@ public class CommonUtils {
     public static boolean doesStringStartWith(String original, String region) {
         return region.regionMatches(true, 0, original, 0, original.length());
     }
+
+    // TODO: это точно нужно переделать
+    public static String ticksToTime(long ticks) {
+        long minute = ticks / 1200;
+        long second = ticks / 20 - minute * 60;
+
+        return Math.round(minute) + ":" + Math.round(second);
+    }
 }
