@@ -97,16 +97,7 @@ public class BuildBattle extends JavaPlugin {
         new BuildBattleCommand(this).setup();
         new VoteCommand(this).setup();
     }
-
-    @Override
-    public void onDisable() {
-        this.gameManager = null;
-        this.voteManager = null;
-        this.scoreboardManager = null;
-        this.objectMapper = null;
-        this.config = null;
-    }
-
+    
     public void saveDefaultConfig(String configFileName) {
         File configFile = new File(getDataFolder(), configFileName);
         if (!configFile.exists()) {
