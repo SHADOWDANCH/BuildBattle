@@ -97,7 +97,7 @@ public class BuildBattle extends JavaPlugin {
         new BuildBattleCommand(this).setup();
         new VoteCommand(this).setup();
     }
-    
+
     public void saveDefaultConfig(String configFileName) {
         File configFile = new File(getDataFolder(), configFileName);
         if (!configFile.exists()) {
