@@ -1,7 +1,6 @@
 package ua.shadowdan.buildbattle;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -15,7 +14,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import ua.shadowdan.buildbattle.cuboid.Cuboid;
 import ua.shadowdan.buildbattle.event.GameStateChangeEvent;
 import ua.shadowdan.buildbattle.listener.TerrainProtectionListener;
-import ua.shadowdan.buildbattle.vote.VoteManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +29,11 @@ public class GameManager implements Listener {
     private final BuildBattle buildBattle;
     @Getter
     private final GameArena arena;
-    @Getter
-    private final VoteManager voteManager;
 
     public GameManager(BuildBattle buildBattle) {
         this.buildBattle = buildBattle;
         this.currentState = GameState.WAITING;
         this.arena = new GameArena(buildBattle);
-        this.voteManager = new VoteManager(buildBattle);
     }
 
     public void setup() {
@@ -104,8 +99,8 @@ public class GameManager implements Listener {
             }
 
             getArena().getPlayerPlot().remove(player);
-            getVoteManager().getVotes().remove(player);
-            getVoteManager().getVotingQueue().remove(player);
+            buildBattle.getVoteManager().getVotes().remove(player);
+            buildBattle.getVoteManager().getVotingQueue().remove(player);
         }
     }
 

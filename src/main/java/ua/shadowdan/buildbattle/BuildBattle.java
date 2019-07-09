@@ -7,9 +7,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.module.paranamer.ParanamerModule;
 import com.jasonclawson.jackson.dataformat.hocon.HoconFactory;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
@@ -22,6 +20,7 @@ import ua.shadowdan.buildbattle.config.Configuration;
 import ua.shadowdan.buildbattle.config.LocationMixin;
 import ua.shadowdan.buildbattle.config.WorldDeserializer;
 import ua.shadowdan.buildbattle.scoreboard.ScoreboardManager;
+import ua.shadowdan.buildbattle.vote.VoteManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,13 +38,19 @@ public class BuildBattle extends JavaPlugin {
     @Getter
     private GameManager gameManager;
     @Getter
+    private VoteManager voteManager;
+    @Getter
     private ScoreboardManager scoreboardManager;
     @Getter
     private ObjectMapper objectMapper;
     private Configuration config;
+    @Getter
+    private static BuildBattle instance;
 
     @Override
     public void onEnable() {
+        instance = this;
+
         String configFileName = "config.conf";
         this.saveDefaultConfig(configFileName);
         objectMapper = new ObjectMapper(new HoconFactory());
@@ -68,7 +73,14 @@ public class BuildBattle extends JavaPlugin {
             throw new RuntimeException("Failed to load config! Plugin will not be enabled", e);
         }
 
-        config.getPlots().forEach(plot -> plot.getWorld().setAutoSave(false));
+        config.getPlots().forEach(plot -> {
+            plot.getWorld().setAutoSave(false);
+            plot.getWorld().setDifficulty(Difficulty.PEACEFUL);
+            plot.getWorld().setGameRule(GameRule.DO_FIRE_TICK, false);
+            plot.getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+            plot.getWorld().setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+            plot.getWorld().setGameRule(GameRule.MOB_GRIEFING, false);
+        });
 
         if (config.getSpawnPoints().size() < config.getMaxPlayers()) {
             this.getLogger().log(Level.WARNING, "Max player's less then spawn point's. This may cause unexpected errors!");
@@ -77,11 +89,22 @@ public class BuildBattle extends JavaPlugin {
         this.gameManager = new GameManager(this);
         this.gameManager.setup();
 
+        this.voteManager = new VoteManager(this);
+
         this.scoreboardManager = new ScoreboardManager(this);
         this.scoreboardManager.setup();
 
         new BuildBattleCommand(this).setup();
         new VoteCommand(this).setup();
+    }
+
+    @Override
+    public void onDisable() {
+        this.gameManager = null;
+        this.voteManager = null;
+        this.scoreboardManager = null;
+        this.objectMapper = null;
+        this.config = null;
     }
 
     public void saveDefaultConfig(String configFileName) {

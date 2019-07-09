@@ -55,7 +55,7 @@ public class GameArena {
                         this.cancel();
                     }
                     Bukkit.broadcastMessage("Время вышло! Начинаем голосование.");
-                    buildBattle.getGameManager().getVoteManager().startVotesStage(playerPlot);
+                    buildBattle.getVoteManager().startVotesStage(playerPlot);
                     this.cancel();
                 }
             }

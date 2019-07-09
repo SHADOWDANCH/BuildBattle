@@ -1,7 +1,6 @@
 package ua.shadowdan.buildbattle.scoreboard.text;
 
 import dk.xakeps.view.api.sidebar.Text;
-import dk.xakeps.view.api.text.StaticText;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ua.shadowdan.buildbattle.BuildBattle;
@@ -45,7 +44,7 @@ public class Texts {
     public final Text VOTING_FOR = new DynamicText() {
         @Override
         public String getText() {
-            return "§fГолосвани: §e" + buildBattle.getGameManager().getVoteManager().getCurrentPlayer().getDisplayName();
+            return "§fГолосвани: §e" + buildBattle.getVoteManager().getCurrentPlayer().getDisplayName();
         }
     };
     public final Text YOU_GRADE = new DynamicText() {
@@ -57,7 +56,7 @@ public class Texts {
     public final Text NEXT_VOTE = new DynamicText() {
         @Override
         public String getText() {
-            Player player = buildBattle.getGameManager().getVoteManager().getVotingQueue().peek();
+            Player player = buildBattle.getVoteManager().getVotingQueue().peek();
             return "§fСледующий: §e" + (player != null ? player.getDisplayName() : "нету");
         }
     };

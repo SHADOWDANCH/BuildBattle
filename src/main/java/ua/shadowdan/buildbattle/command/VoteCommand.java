@@ -37,7 +37,7 @@ public class VoteCommand implements CommandExecutor {
             sender.sendMessage("Голосование ещё не началось!");
             return true;
         }
-        VoteManager voteManager = buildBattle.getGameManager().getVoteManager();
+        VoteManager voteManager = buildBattle.getVoteManager();
         Player currentPlayer = voteManager.getCurrentPlayer();
 
         if (currentPlayer == sender) {
