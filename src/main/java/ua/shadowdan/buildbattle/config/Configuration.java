@@ -5,9 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Location;
+import ua.shadowdan.buildbattle.GameState;
 import ua.shadowdan.buildbattle.cuboid.Cuboid;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by SHADOWDAN on 30.06.2019.
@@ -24,4 +26,5 @@ public class Configuration {
     @JsonProperty("spawn-points")
     private final List<Location> spawnPoints;
     private final String[] themes;
+    private final Map<GameState, String[]> scoreboard;
 }

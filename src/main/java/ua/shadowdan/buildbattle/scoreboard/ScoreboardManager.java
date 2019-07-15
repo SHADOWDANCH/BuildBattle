@@ -4,7 +4,6 @@ import dk.xakeps.view.api.ViewAPI;
 import dk.xakeps.view.api.sidebar.Sidebar;
 import dk.xakeps.view.api.sidebar.SidebarManager;
 import dk.xakeps.view.api.text.StaticText;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,7 +12,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import ua.shadowdan.buildbattle.BuildBattle;
 import ua.shadowdan.buildbattle.GameState;
 import ua.shadowdan.buildbattle.event.GameStateChangeEvent;
-import ua.shadowdan.buildbattle.scoreboard.text.Texts;
+import ua.shadowdan.buildbattle.scoreboard.text.DynamicText;
 
 /**
  * Created by SHADOWDAN on 03.07.2019.
@@ -22,13 +21,10 @@ public class ScoreboardManager implements Listener {
 
     private final SidebarManager sidebarManager;
     private final BuildBattle buildBattle;
-    @Getter
-    private final Texts texts;
 
     public ScoreboardManager(BuildBattle buildBattle) {
         this.buildBattle = buildBattle;
         this.sidebarManager = ViewAPI.getSidebarManager();
-        this.texts = new Texts(buildBattle);
     }
 
     public void setup() {
@@ -41,31 +37,11 @@ public class ScoreboardManager implements Listener {
 
         sidebar.setTitle(new StaticText("§6§lBuildBattle"));
 
-        texts.BASIC_GROUP.forEach(sidebar::addLine);
+        String[] template = buildBattle.getPluginConfig().getScoreboard().getOrDefault(state, new String[] {"§c§lERROR!"});
 
-        switch (state) {
-            case WAITING: {
-                break;
-            }
-            case GAME: {
-                texts.GAME_GROUP.forEach(sidebar::addLine);
-                break;
-            }
-            case VOTE: {
-                texts.VOTE_GROUP.forEach(sidebar::addLine);
-                break;
-            }
-            case END: {
-                break;
-            }
-            default: {
-                sidebar.addLine(new StaticText("§c§kaa§r§cError§c§kaa"));
-                break;
-            }
+        for (String s : template) {
+            sidebar.addLine(new DynamicText(s));
         }
-
-        sidebar.addLine(Texts.EMPTY);
-        sidebar.addLine(new StaticText("§7www.craftchan.net"));
     }
 
     @EventHandler

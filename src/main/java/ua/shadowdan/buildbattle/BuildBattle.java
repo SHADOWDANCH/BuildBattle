@@ -76,10 +76,10 @@ public class BuildBattle extends JavaPlugin {
         config.getPlots().forEach(plot -> {
             plot.getWorld().setAutoSave(false);
             plot.getWorld().setDifficulty(Difficulty.PEACEFUL);
-            plot.getWorld().setGameRule(GameRule.DO_FIRE_TICK, false);
-            plot.getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-            plot.getWorld().setGameRule(GameRule.DO_WEATHER_CYCLE, false);
-            plot.getWorld().setGameRule(GameRule.MOB_GRIEFING, false);
+            plot.getWorld().setGameRuleValue("doFireTick", "false");
+            plot.getWorld().setGameRuleValue("doDaylightCycle", "false");
+            plot.getWorld().setGameRuleValue("doWeatherCycle", "false");
+            plot.getWorld().setGameRuleValue("mobGriefing", "false");
         });
 
         if (config.getSpawnPoints().size() < config.getMaxPlayers()) {
