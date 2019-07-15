@@ -44,12 +44,9 @@ public class BuildBattle extends JavaPlugin {
     @Getter
     private ObjectMapper objectMapper;
     private Configuration config;
-    @Getter
-    private static BuildBattle instance;
 
     @Override
     public void onEnable() {
-        instance = this;
 
         String configFileName = "config.conf";
         this.saveDefaultConfig(configFileName);
